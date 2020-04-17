@@ -12,7 +12,7 @@ let verificacionToken = (req, res, next) => {
                 err: {
                     message: 'Token no valido'
                 }
-            })
+            });
         }
         req.usuario = decoded.usuario;
         next();
@@ -36,7 +36,7 @@ let verificaRole = (req, res, next) => {
             err: {
                 message: 'El usuario no es un Administrador'
             }
-        })
+        });
     }
 };
 
