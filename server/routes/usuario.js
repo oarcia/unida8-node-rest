@@ -3,11 +3,18 @@ const express = require('express')
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
+//con esto accedemos a verica token y lo ponemos en el  get para traer el token
+const { verificacionToken, verificaRole } = require('../middlewares/autenticacion')
 
 const app = express();
 
 //en esta parte traemos los usuarios con filtro es decir limites y desde cuales
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificacionToken, (req, res) => {
+    // return res.json({
+    //     usuario: req.usuario,
+    //     nombre: req.usuario.nombre,
+    //     email: req.usuario.email
+    // });
     //res.json('get usuario local')
     let desde = req.query.desde || 0
     desde = Number(desde);
@@ -36,7 +43,7 @@ app.get('/usuario', function(req, res) {
         })
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificacionToken, verificaRole], (req, res) => {
 
     let body = req.body;
     //definimos el esquema de la base de los campos que nesecitamos
@@ -64,7 +71,7 @@ app.post('/usuario', function(req, res) {
 });
 
 //actualizacion de registro
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificacionToken, verificaRole], (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']) //el _.pick representa alo datos que quiero que regrese
@@ -90,7 +97,7 @@ app.put('/usuario/:id', function(req, res) {
 });
 
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificacionToken, verificaRole], (req, res) => {
     //res.json('delete usuario')
     let id = req.params.id;
     let cambiaEstado = {
